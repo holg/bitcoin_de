@@ -1,0 +1,28 @@
+[package]
+name = "bitcoin_de"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "bitcoin_de_trading_api_client"
+path = "src/main.rs"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] } # For making HTTP requests
+clap = { version = "4", features = ["derive"] } # For parsing command line arguments
+hmac = "0.12"       # For HMAC-SHA256
+sha2 = "0.10"       # For SHA256 (used by HMAC-SHA256)
+md5 = "0.7"         # For MD5 hashing
+hex = "0.4"         # For converting binary to hex strings
+urlencoding = "2.1" # For URL encoding parameters
+dotenv = "0.15"
+url = "2.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_urlencoded = "0.7"
+thiserror = "2"
+rust_decimal = { version = "1.37", features = ["serde-with-str", "serde"] }
+chrono = { version="0.4", features = ["serde"] }
