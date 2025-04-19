@@ -21,7 +21,7 @@ pub use misc::*;
 pub use order::*;
 pub use trades::*;
 pub use withdrawals::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use crate::bitcoin_de_trading_api_sdk_v4::errors::ApiErrorDetail;
 
@@ -30,7 +30,7 @@ use crate::bitcoin_de_trading_api_sdk_v4::errors::ApiErrorDetail;
 
 /// Represents trading partner information.
 /// Based on the "Trading Partner Information" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct TradingPartnerInformation {
     pub username: String,
@@ -53,7 +53,7 @@ pub struct TradingPartnerInformation {
 
 /// Represents order requirements.
 /// Based on the "Order Requirements" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct OrderRequirements {
     #[serde(rename = "min_trust_level")]
@@ -68,7 +68,7 @@ pub struct OrderRequirements {
 
 /// Represents page details in paged responses.
 /// Based on the "Page Details" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct PageDetails {
     pub current: i32,
     pub last: i32,
@@ -76,7 +76,7 @@ pub struct PageDetails {
 
 /// Represents amounts in currency for Ledger entries (before/after fee).
 /// Based on "Currency to trade" and "Currency to pay" tables.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CurrencyAmounts {
     pub currency: String,
     #[serde(with = "rust_decimal::serde::str")]

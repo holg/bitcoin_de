@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/misc.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 
@@ -11,7 +11,7 @@ use super::{PageDetails, ApiErrorDetail};
 
 /// Represents a compact order (bid or ask) in the compact orderbook.
 /// Based on the "Bids" and "Asks" tables for showOrderbookCompact.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct CompactOrder {
     #[serde(with = "rust_decimal::serde::str")] // Numbers as strings in examples
@@ -25,7 +25,7 @@ pub struct CompactOrder {
 
 /// Represents the bids and asks lists in the compact orderbook.
 /// Based on the "Orders" table for showOrderbookCompact.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CompactOrderbook {
     pub bids: Vec<CompactOrder>, // Array of CompactOrder
     pub asks: Vec<CompactOrder>, // Array of CompactOrder
@@ -33,7 +33,7 @@ pub struct CompactOrderbook {
 
 /// Represents the successful response for `showOrderbookCompact`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct ShowOrderbookCompactResponse {
     #[serde(rename = "trading_pair")]
@@ -46,7 +46,7 @@ pub struct ShowOrderbookCompactResponse {
 
 /// Represents a public trade history entry.
 /// Based on the "Trade Informationen" table for showPublicTradeHistory.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct PublicTradeEntry {
     #[serde(with = "chrono::serde::ts_seconds")] // Unix timestamp
     pub date: DateTime<Utc>, // Integer (Unix timestamp) -> DateTime<Utc>
@@ -60,7 +60,7 @@ pub struct PublicTradeEntry {
 
 /// Represents the successful response for `showPublicTradeHistory`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct ShowPublicTradeHistoryResponse {
     #[serde(rename = "trading_pair")]
@@ -73,7 +73,7 @@ pub struct ShowPublicTradeHistoryResponse {
 
 /// Details within the `rates` object in `ShowRatesResponse`.
 /// Based on the "Rates" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct RatesDetails {
     #[serde(rename = "rate_weighted")]
@@ -89,7 +89,7 @@ pub struct RatesDetails {
 
 /// Represents the successful response for `showRates`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct ShowRatesResponse {
     #[serde(rename = "trading_pair")]
@@ -102,7 +102,7 @@ pub struct ShowRatesResponse {
 
 /// Represents outgoing address details (used for address pool as well).
 /// Based on the structure shown in showOutgoingAddresses example.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct OutgoingAddressDetails {
     #[serde(rename = "address_id")]
     pub address_id: i64, // Integer (example 7411) -> i64
@@ -115,7 +115,7 @@ pub struct OutgoingAddressDetails {
 
 /// Represents the successful response for `showOutgoingAddresses` and `listAddressPool`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowOutgoingAddressesResponse { // Also used for ListAddressPoolResponse
     #[serde(rename = "outgoing_address")]
     pub outgoing_address: Vec<OutgoingAddressDetails>, // Array
@@ -132,7 +132,7 @@ pub struct ShowOutgoingAddressesResponse { // Also used for ListAddressPoolRespo
 // seem to return just errors and credits on success.
 
 /// Represents a basic successful response containing only errors (empty on success) and credits.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BasicSuccessResponse {
     pub errors: Vec<ApiErrorDetail>,
     pub credits: i32,

@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/trades.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
@@ -12,7 +12,7 @@ use super::{TradingPartnerInformation, CurrencyAmounts, PageDetails, ApiErrorDet
 
 /// Represents details of a single one of your trades.
 /// Based on the "Trade-Details" table for showMyTrades and showMyTradeDetails.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct MyTradeDetails {
     #[serde(rename = "trade_id")]
@@ -87,7 +87,7 @@ pub struct MyTradeDetails {
 
 /// Represents the successful response for `showMyTrades`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowMyTradesResponse {
     pub trades: Vec<MyTradeDetails>, // Array of MyTradeDetails
     pub page: PageDetails, // Nested object
@@ -98,7 +98,7 @@ pub struct ShowMyTradesResponse {
 
 /// Represents the successful response for `showMyTradeDetails`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowMyTradeDetailsResponse {
     // The example JSON has the trade details directly under "trade".
     pub trade: MyTradeDetails, // Nested MyTradeDetails object

@@ -1,15 +1,17 @@
 // main.rs
-#![allow(unused_imports)] // TODO well we shall remoce this
+#![allow(unused_imports)] // TODO well we shall remove this
 use std::collections::HashMap;
 use bitcoin_de::bitcoin_de_trading_api_sdk_v4::TradingApiSdkV4;
-// Correct the path if constants are in method_settings::constants
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::method_settings::constants::{METHOD_SHOW_ACCOUNT_INFO, METHOD_SHOW_RATES, SHOW_RATES_PARAMETER_TRADING_PAIR};
-use clap::Parser;
-// Remove this if constants are now in method_settings::constants
-// use bitcoin_de::constants::METHOD_SHOW_RATES;
-use bitcoin_de::enums::TradingPair::BTCEUR;
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::method_settings::constants::{
+    METHOD_SHOW_ACCOUNT_INFO, METHOD_SHOW_RATES, SHOW_RATES_PARAMETER_TRADING_PAIR};
+use bitcoin_de::enums::TradingPair::*;
 use std::env;
-use dotenv::dotenv; // Load environment variables from .env file
+// We need tokio for the #[tokio::main] macro and the runtime for the default CLI
+// This setup is conditional on the "default" feature being enabled.
+#[cfg(feature = "cmdline")]
+use {tokio, clap::Parser, dotenv::dotenv};
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
 /// Bitcoin-de Trading API SDK v4 Client
 /// Command-line arguments for the Bitcoin.de Trading API client.
@@ -52,7 +54,9 @@ struct Args {
 ///
 /// This function will panic if:
 /// - Neither command-line arguments nor environment variables provide valid API credentials
-fn main() {
+#[cfg(feature = "cmdline")]
+#[tokio::main]
+async fn  main() {
     // Load environment variables from .env file first.
     dotenv().ok();
 
@@ -71,7 +75,7 @@ fn main() {
     // --- Call showAccountInfo ---
     println!("\n>>> Calling showAccountInfo...");
     let account_info_result = trading_api_sdk.show_account_info();
-    match account_info_result {
+    match account_info_result.await {
         // Use {:?} for potentially complex Ok value, or handle specific structure later
         Ok(response) => println!("showAccountInfo successful Response: {:?}", response),
         Err(e) => eprintln!("Error during showAccountInfo: {}", e),
@@ -79,20 +83,18 @@ fn main() {
 
     // --- Call showRates ---
     println!("\n>>> Calling showRates...");
-    // Use a more descriptive variable name
-    let mut show_rates_params = HashMap::new();
-    // Use the constant defined for the parameter name
-    let key = SHOW_RATES_PARAMETER_TRADING_PAIR; // "trading_pair"
-    // --- FIX: Convert trading pair to lowercase ---
-    let value = BTCEUR.to_string().to_lowercase(); // "btceur"
-    // --- END FIX ---
-    show_rates_params.insert(key, value);
+    let show_rates_result = trading_api_sdk.show_rates(BTCEUR);
 
-    let show_rates_result = trading_api_sdk.show_rates(BTCEUR.to_string().to_lowercase());
-
-    match show_rates_result {
+    match show_rates_result.await {
         // Use {:?} for potentially complex Ok value, or handle specific structure later
         Ok(response) => println!("showRates successful Response: {:?}", response),
         Err(e) => eprintln!("Error during showRates: {}", e),
     }
+}
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+pub async fn main() {
+
+
 }

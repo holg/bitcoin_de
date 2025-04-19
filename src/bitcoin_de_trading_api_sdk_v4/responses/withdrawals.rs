@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/withdrawals.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 
@@ -11,7 +11,7 @@ use super::{PageDetails, ApiErrorDetail};
 
 /// Represents withdrawal details.
 /// Based on the "Withdrawal" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct WithdrawalDetails {
     #[serde(rename = "withdrawal_id")]
@@ -37,7 +37,7 @@ pub struct WithdrawalDetails {
 /// Note: The documentation shows the withdrawal details directly under a "withdrawal" key
 /// in the top-level response for this specific endpoint, unlike `showWithdrawals`
 /// which has an array.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowWithdrawalResponse {
     pub withdrawal: WithdrawalDetails, // Nested object
     pub errors: Vec<ApiErrorDetail>, // Empty array on success
@@ -46,7 +46,7 @@ pub struct ShowWithdrawalResponse {
 
 /// Represents the successful response for `showWithdrawals`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowWithdrawalsResponse {
     pub withdrawals: Vec<WithdrawalDetails>, // Array of WithdrawalDetails
     pub page: PageDetails, // Nested object
@@ -56,7 +56,7 @@ pub struct ShowWithdrawalsResponse {
 
 /// Represents the successful response for `createWithdrawal`.
 /// Based on the Success-Response example, which shows a withdrawal_id.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CreateWithdrawalResponse {
     #[serde(rename = "withdrawal_id")]
     pub withdrawal_id: i64, // Integer (example 123413) -> i64
@@ -72,7 +72,7 @@ pub type DeleteWithdrawalResponse = super::misc::BasicSuccessResponse;
 
 /// Represents the successful response for `showWithdrawalMinNetworkFee`.
 /// Based on the Success-Response example, which shows a min_network_fee string.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowWithdrawalMinNetworkFeeResponse {
     #[serde(rename = "min_network_fee")]
     #[serde(with = "rust_decimal::serde::str")] // Numbers as strings in examples

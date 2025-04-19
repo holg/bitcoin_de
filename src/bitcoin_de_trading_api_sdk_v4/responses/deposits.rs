@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/deposits.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 
@@ -11,7 +11,7 @@ use super::{PageDetails, ApiErrorDetail};
 
 /// Represents deposit details.
 /// Based on the "Deposit" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct DepositDetails {
     #[serde(rename = "deposit_id")]
@@ -32,7 +32,7 @@ pub struct DepositDetails {
 /// Note: The documentation shows the deposit details directly under a "deposit" key
 /// in the top-level response for this specific endpoint, unlike `showDeposits`
 /// which has an array.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowDepositResponse {
     pub deposit: DepositDetails, // Nested object
     pub errors: Vec<ApiErrorDetail>, // Empty array on success
@@ -41,7 +41,7 @@ pub struct ShowDepositResponse {
 
 /// Represents the successful response for `showDeposits`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowDepositsResponse {
     // Note: Example JSON had nested "deposits": [...] within a top-level "deposits" key.
     // Following the table description and common patterns, assuming top-level contains the array.
@@ -53,7 +53,7 @@ pub struct ShowDepositsResponse {
 
 /// Represents the successful response for `requestDepositAddress`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RequestDepositAddressResponse {
     pub address: String, // String
     #[serde(rename = "recipient_purpose")]

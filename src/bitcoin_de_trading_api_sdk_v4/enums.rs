@@ -231,3 +231,86 @@ generate_enum!(Currency,
     CHF => "CHF",
     USD => "USD"
 );
+const ALL_TRADING_PAIRS: &[TradingPair] = &[
+    TradingPair::BTCEUR,
+    TradingPair::BCHEUR,
+    TradingPair::ETHBTC,
+    TradingPair::ETHEUR,
+    TradingPair::LTCEUR,
+    TradingPair::LTCBTC,
+    TradingPair::XRPEUR,
+    TradingPair::XRPBTC,
+    TradingPair::EOSEUR,
+    TradingPair::EOSBTC,
+    TradingPair::BNBEUR,
+    TradingPair::BNBBTC,
+    TradingPair::XMREUR,
+    TradingPair::XMRBTC,
+    TradingPair::TRXEUR,
+    TradingPair::TRXBTC,
+    TradingPair::ETCBTC,
+    TradingPair::ETCEUR,
+    TradingPair::DASHEUR,
+    TradingPair::DASHBTC,
+    TradingPair::ZECEUR,
+    TradingPair::ZECBTC,
+    TradingPair::REPEUR,
+    TradingPair::REPBTC,
+    TradingPair::BATEUR,
+    TradingPair::BATBTC,
+    TradingPair::AIDUSDEUR,
+    TradingPair::AIDUSDBTC,
+    TradingPair::XLMEUR,
+    TradingPair::XLMBTC,
+    TradingPair::AVAXEUR,
+    TradingPair::AVAXBTC,
+    TradingPair::ADAEUR,
+    TradingPair::ADABTC,
+    TradingPair::GRTEUR,
+    TradingPair::GRTBTC,
+    TradingPair::LINKEUR,
+    TradingPair::LINKBTC,
+    TradingPair::MATICBTC,
+    TradingPair::MATICEUR,
+    TradingPair::SOLEUR,
+    TradingPair::SOLBTC,
+    TradingPair::DOTEUR,
+    TradingPair::DOTBTC,
+    TradingPair::UNIEUR,
+    TradingPair::UNIBTC,
+    TradingPair::XMRETH,
+    TradingPair::XRPETH,
+    TradingPair::LTCETH,
+    TradingPair::DASHETH,
+    TradingPair::ZECETH,
+    TradingPair::REPBCH,
+    TradingPair::BATBCH,
+    TradingPair::XLMBCH,
+    TradingPair::ADAETH,
+    TradingPair::GRTETH,
+    TradingPair::LINKETH,
+    TradingPair::MATICETH,
+    TradingPair::SOLETH,
+    TradingPair::DOTETH,
+    TradingPair::UNIBNB,
+    TradingPair::EURCHF,
+    TradingPair::BTCCHF,
+    TradingPair::ETHCHF,
+];
+impl TradingPair {
+    /// Converts a string slice to a TradingPair enum variant using iteration.
+    /// Returns an Error if the string does not match any variant.
+    pub fn from_str(s: &str) -> Result<Self, crate::bitcoin_de_trading_api_sdk_v4::errors::Error> { // Return our custom Error
+        let lower_s = s.to_ascii_lowercase(); // Convert input string to lowercase
+
+        // Iterate over all variants, convert their string value to lowercase, and compare
+        for pair in ALL_TRADING_PAIRS.iter() {
+            if pair.as_str().to_ascii_lowercase() == lower_s {
+                return Ok(*pair); // Return the found variant (TradingPair is Copy)
+            }
+        }
+
+        // If no match is found
+        Err(crate::bitcoin_de_trading_api_sdk_v4::errors::Error::Other(format!("Invalid trading pair: {}", s))) // Use a suitable error variant
+    }
+}

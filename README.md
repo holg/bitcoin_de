@@ -32,7 +32,7 @@ cargo install bitcoin_de
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/bitcoin_de.git
+git clone https://github.com/holg/bitcoin_de.git
 cd bitcoin_de
 cargo build --release
 ```
@@ -75,17 +75,21 @@ fn main() {
 
 ### As a Command-Line Tool
 
-```bash
+
 # View the BTC/EUR orderbook
+```bash
 bitcoin_de_trading_api_client show-orderbook --trading-pair btceur --type buy
-
+```
 # Create a buy order
+```bash
 bitcoin_de_trading_api_client create-order --trading-pair btceur --type buy --amount 0.1 --price 50000
-
+```
 # View your account information
+```bash
 bitcoin_de_trading_api_client show-account-info
-
+```
 # Show help
+```bash
 bitcoin_de_trading_api_client --help
 ```
 

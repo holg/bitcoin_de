@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/order.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 
@@ -13,7 +13,7 @@ use super::{TradingPartnerInformation, OrderRequirements, PageDetails, ApiErrorD
 
 /// Represents a single orderbook entry (bid or ask) from the public orderbook.
 /// Based on the "Orders" table for showOrderbook.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct OrderbookEntry {
     #[serde(rename = "order_id")]
@@ -51,7 +51,7 @@ pub struct OrderbookEntry {
 
 /// Represents the successful response for `showOrderbook`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowOrderbookResponse {
     pub orders: Vec<OrderbookEntry>, // Array of OrderbookEntry
     pub errors: Vec<ApiErrorDetail>, // Empty array on success
@@ -60,7 +60,7 @@ pub struct ShowOrderbookResponse {
 
 /// Represents details of a single one of your orders.
 /// Based on the "Order-Details" table for showMyOrders and showMyOrderDetails.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct MyOrderDetails {
     #[serde(rename = "order_id")]
@@ -110,7 +110,7 @@ pub struct MyOrderDetails {
 
 /// Represents the successful response for `showMyOrders`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowMyOrdersResponse {
     pub orders: Vec<MyOrderDetails>, // Array of MyOrderDetails
     pub page: PageDetails, // Nested object
@@ -122,7 +122,7 @@ pub struct ShowMyOrdersResponse {
 /// Represents the successful response for `showMyOrderDetails`.
 /// Based on the Success-Response example JSON structure.
 // This struct uses MyOrderDetails for its 'order' field.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowOrderDetailsResponse {
     // The example JSON has the order details directly under "order".
     #[serde(rename = "order")] // Field name in the JSON response
@@ -133,7 +133,7 @@ pub struct ShowOrderDetailsResponse {
 
 /// Represents the successful response for `createOrder`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CreateOrderResponse {
     #[serde(rename = "order_id")]
     pub order_id: String, // String (example "A1234BC")
@@ -143,7 +143,7 @@ pub struct CreateOrderResponse {
 
 /// Represents the successful response for `deleteOrder`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DeleteOrderResponse {
     pub errors: Vec<ApiErrorDetail>, // Empty array on success
     pub credits: i32,

@@ -1,5 +1,5 @@
 // bitcoin_de_trading_api_sdk_v4/responses/account.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
@@ -11,7 +11,7 @@ use super::{CurrencyAmounts, PageDetails, ApiErrorDetail};
 // --- Account Response Structs ---
 
 /// Details within the `account_info` object in `ShowAccountInfoResponse`.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct AccountInfoDetails {
     pub username: String,
@@ -28,7 +28,7 @@ pub struct AccountInfoDetails {
 /// that can be used for trading on the Bitcoin.de platform, including the
 /// total and available amounts, reservation timestamps, and allocation
 /// across different cryptocurrencies.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct FidorReservation {
     /// The total amount of money reserved at Fidor Bank for trading.
@@ -58,7 +58,7 @@ pub struct FidorReservation {
 
 /// Details within the currency allocation in `FidorReservation`.
 /// Based on the "Prozentuale Aufteilung" and currency tables (BTC, BCH).
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct FidorAllocation {
     pub percent: i32, // String -> Integer (based on table, example uses int)
@@ -72,7 +72,7 @@ pub struct FidorAllocation {
 
 /// Details within the `encrypted_information` object.
 /// Based on the "Encrypted-Information" table.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct EncryptedInformation {
     #[serde(rename = "bic_short")]
@@ -82,37 +82,63 @@ pub struct EncryptedInformation {
     pub uid: String, // String
 }
 
-
 /// Represents the successful response for `showAccountInfo`.
-/// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
-// #[serde(rename_all = "snake_case")] // Apply snake_case if needed
+/// Based *strictly* on the user's provided successful JSON output structure:
+/// {"data":{...},"errors":[],"credits":28}
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowAccountInfoResponse {
-    // Top level fields from example JSON:
-    #[serde(rename = "account_info")]
-    pub account_info_details: AccountInfoDetails, // Renamed to avoid conflict
-    #[serde(rename = "fiat_balances")]
-    // HashMap based on example JSON structure (e.g., "EUR": "1000.0")
-    // Use Decimal for balances.
-    pub fiat_balances_map: HashMap<String, Decimal>, // Renamed to avoid conflict
-    #[serde(rename = "crypto_balances")]
-    // HashMap based on example JSON structure (e.g., "BTC": "0.5")
-    // Use Decimal for balances.
-    pub crypto_balances_map: HashMap<String, Decimal>, // Renamed to avoid conflict
-    #[serde(rename = "fidor_reservation")]
-    pub fidor_reservation: Option<FidorReservation>,
-    #[serde(rename = "encrypted_information")]
-    pub encrypted_information: Option<EncryptedInformation>,
-
-    // Common top-level fields in success responses
+    pub data: ShowAccountInfoData, // The main content is under a field named 'data'
     pub errors: Vec<ApiErrorDetail>, // Empty array on success
     pub credits: i32,
+}
+
+/// Represents the structure of the 'data' field in the `showAccountInfo` response JSON.
+/// Based *strictly* on the user's provided successful JSON output structure:
+/// {"balances":{...},"encrypted_information":{...}}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ShowAccountInfoData {
+    pub balances: AccountBalances, // Contains the detailed crypto balances
+    #[serde(rename = "encrypted_information")]
+    pub encrypted_information: EncryptedInformation, // Nested struct
+    // Note: The example JSON does NOT show 'account_info' or 'fidor_reservation' within 'data'.
+    // They might be optional top-level fields, but are not part of the 'data' struct based on the JSON.
+}
+
+/// Represents the structure of the 'balances' field within the 'data' object
+/// in the `showAccountInfo` response JSON.
+/// Based *strictly* on the user's provided successful JSON output structure:
+/// {"btc":{...},"bch":{...},...}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AccountBalances {
+    // Based on the example JSON, this contains keys like "btc", "bch", etc.,
+    // each mapping to a struct with "total_amount", "available_amount", "reserved_amount".
+    #[serde(flatten)] // Flatten the map of currency tickers -> DetailedBalanceAmounts structs
+    pub crypto_balances: HashMap<String, DetailedBalanceAmounts>,
+    // The example JSON does NOT show fiat balances within this 'balances' object or at the top level,
+    // despite the documentation mentioning them. If fiat balances appear elsewhere,
+    // they'll need a separate struct/field.
+}
+
+/// Represents the detailed balance amounts for a single cryptocurrency.
+/// Based on the structure of the objects nested under currency tickers in
+/// the 'balances' field of the `showAccountInfo` response JSON.
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DetailedBalanceAmounts {
+    #[serde(rename = "total_amount")]
+    #[serde(with = "rust_decimal::serde::str")]
+    pub total_amount: Decimal,
+    #[serde(rename = "available_amount")]
+    #[serde(with = "rust_decimal::serde::str")]
+    pub available_amount: Decimal,
+    #[serde(rename = "reserved_amount")]
+    #[serde(with = "rust_decimal::serde::str")]
+    pub reserved_amount: Decimal,
 }
 
 
 /// Represents a ledger entry.
 /// Based on the "Details zur Position" table for showAccountLedger.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct LedgerEntry {
     #[serde(rename = "date")]
@@ -130,7 +156,7 @@ pub struct LedgerEntry {
 
 /// Represents trade details within a ledger entry.
 /// Based on the "Tradedetails" table for showAccountLedger.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 // #[serde(rename_all = "snake_case")] // Apply snake_case if needed
 pub struct LedgerTradeDetails {
     #[serde(rename = "trade_id")]
@@ -158,7 +184,7 @@ pub struct LedgerTradeDetails {
 
 /// Represents the successful response for `showAccountLedger`.
 /// Based on the Success-Response example JSON structure.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowAccountLedgerResponse {
     #[serde(rename = "account_ledger")]
     pub account_ledger: Vec<LedgerEntry>,
@@ -168,7 +194,7 @@ pub struct ShowAccountLedgerResponse {
 }
 
 /// Represents the successful response for `showPermissions`.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShowPermissionsResponse {
     pub permissions: Vec<String>, // Array of Strings
     pub errors: Vec<ApiErrorDetail>,

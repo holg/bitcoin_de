@@ -1,6 +1,6 @@
 // bitcoin_de_trading_api_sdk_v4/errors
 use reqwest::StatusCode;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use std::time::SystemTimeError;
 use reqwest::header::InvalidHeaderValue;
@@ -8,7 +8,7 @@ use reqwest::header::InvalidHeaderValue;
 
 /// Represents a single error detail within the API response.
 /// Based on the "Error-Details" table in the documentation.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ApiErrorDetail {
     pub message: String,
     // The documentation says 'code' is string, but example is integer (50).
@@ -22,7 +22,7 @@ pub struct ApiErrorDetail {
 ///
 /// This struct is used to deserialize the JSON body returned by the API
 /// when an error occurs.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ApiErrorBody {
     /// A list of error codes returned by the API.
     pub errors: Vec<i32>,

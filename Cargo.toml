@@ -2,6 +2,16 @@
 name = "bitcoin_de"
 version = "0.1.0"
 edition = "2021"
+authors = ["Trahe Consult<trahe@mac.com>"]
+description = "Implementation of the Bitcoin.de Trading API v4"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/holg/bitcoin_de.git"
+homepage = "https://github.com/holg/bitcoin_de"
+documentation = "https://docs.rs/bitcoin_de"
+keywords = ["bitcoin", "trading", "api", "client", "crypto"]
+categories = ["api-bindings", "cryptography", "command-line-utilities"]
+exclude = ["target/", ".env.*", "secrets/", ".git/"]
 
 [lib]
 path = "src/lib.rs"
@@ -9,16 +19,25 @@ path = "src/lib.rs"
 [[bin]]
 name = "bitcoin_de_trading_api_client"
 path = "src/main.rs"
+# Require the 'cmdline' feature for this binary.
+# Building this binary (e.g., `cargo build --bin bitcoin_de_trading_api_client`)
+# will automatically enable the 'cmdline' feature.
+required-features = ["cmdline"]
+[[bin]]
+name = "bitcoin_de_backend" # Give the backend binary a distinct name
+path = "src/backend/main.rs" # Point to a new file for the backend entry point
+# Require the 'backend' feature for this binary.
+# Building this binary (e.g., `cargo build --bin bitcoin_de_backend`)
+# will automatically enable the 'backend' feature.
+required-features = ["backend"]
 
 [dependencies]
-reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] } # For making HTTP requests
-clap = { version = "4", features = ["derive"] } # For parsing command line arguments
+clap = { version = "4", features = ["derive"], optional=true } # For parsing command line arguments
 hmac = "0.12"       # For HMAC-SHA256
 sha2 = "0.10"       # For SHA256 (used by HMAC-SHA256)
 md5 = "0.7"         # For MD5 hashing
 hex = "0.4"         # For converting binary to hex strings
-urlencoding = "2.1" # For URL encoding parameters
-dotenv = "0.15"
+#urlencoding = "2.1" # For URL encoding parameters
 url = "2.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -26,3 +45,35 @@ serde_urlencoded = "0.7"
 thiserror = "2"
 rust_decimal = { version = "1.37", features = ["serde-with-str", "serde"] }
 chrono = { version="0.4", features = ["serde"] }
+#reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] } # For making HTTP requests
+# reqwest: Base version, features enabled conditionally below
+reqwest = { version = "0.12.15", default-features = false }
+# Async Runtimes and WASM-specific crates (enabled by features, made optional)
+tokio = { version = "1.44.2", features = ["rt", "time", "macros"], optional = true } # Minimal features for running async, time for SystemTime
+wasm-bindgen-futures = { version = "0.4.43", optional = true } # Needed to run async code in WASM
+wasm-bindgen = { version = "0.2.93", optional = true } # For JS interop in WASM
+js-sys = { version = "0.3.69", optional = true } # For interacting with JS types in WASM
+web-sys = { version = "0.3.69", features = ["Window", "Document", "Element", "console"], optional = true } # For browser APIs in WASM
+
+# Backend framework (using Axum) - optional = true and included in 'backend' feature
+axum = { version = "0.8", features=["macros"],  optional = true } # Added axum dependency
+
+
+# Make dotenv optional as it's primarily for CLI configuration
+dotenv = { version = "0.15.0", optional = true }
+
+# Add futures-util as an optional dependency, needed by the backend
+futures-util = { version = "0.3.31", optional = true } # Added futures-util
+
+[features]
+# Define our features
+cmdline = ["tokio/rt-multi-thread", "reqwest-native", "dotenv", "clap"] # Default feature enables CLI requirements
+
+backend = ["axum", "tokio", "tokio/rt-multi-thread", "reqwest-native", "dotenv", "futures-util"] # Actix backend requires Actix Web and Tokio for runtime
+
+wasm = ["wasm-bindgen-futures", "wasm-bindgen", "js-sys", "web-sys", "reqwest-wasm"] # WASM requires WASM-specific crates and WASM reqwest features
+
+# Internal features to conditionally enable reqwest features based on our features
+# These are not meant to be enabled directly by the user
+reqwest-native = ["reqwest/rustls-tls", "reqwest/json"] # For native targets (CLI, Actix) - uses rustls and json
+reqwest-wasm = ["reqwest/json"] # For WASM target - uses wasm-bindgen fetch and json
