@@ -1,3 +1,13 @@
+# Rust Bitcoin.de Trading API Client (v4)
+
+[![crates.io](https://img.shields.io/crates/v/bitcoin_de.svg?style=flat-square)](https://crates.io/crates/bitcoin_de) <!-- Placeholder: Update if published -->
+[![docs.rs](https://img.shields.io/docsrs/bitcoin_de?style=flat-square)](https://docs.rs/bitcoin_de/) <!-- Placeholder: Update if published -->
+[![Build Status](https://img.shields.io/github/actions/workflow/status/holg/bitcoin_de/rust.yml?branch=main&style=flat-square)](https://github.com/holg/bitcoin_de/actions) <!-- Assuming GH username/repo -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+A Rust client library (SDK) for interacting with the [Bitcoin.de Trading API (Version 4)](https://www.bitcoin.de/de/api/tapi/v4/docu), with an optional Axum-based backend feature providing HTTP endpoints.
+
+**Note:** While many core API methods are implemented in the SDK, comprehensive
 # Bitcoin.de Trading API Client
 
 A Rust client library and command-line tool for interacting with the Bitcoin.de Trading API v4.

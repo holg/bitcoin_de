@@ -3,7 +3,7 @@ use axum::{extract::State, http::StatusCode, response::Json, extract::Path};
 // Import SDK components needed by handlers
 use bitcoin_de::bitcoin_de_trading_api_sdk_v4::TradingApiSdkV4; // The SDK client struct
 // use bitcoin_de::bitcoin_de_trading_api_sdk_v4::errors::Error; // SDK Error type
-// TODO implement IntoResponse trait for custom error responses and use it here 
+// TODO implement IntoResponse trait for custom error responses and use it here
 // Import enums and response structs used by handlers
 use bitcoin_de::enums::TradingPair; // Import the TradingPair enum (needed for from_str)
 use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::account::ShowAccountInfoResponse; // Response struct for account info

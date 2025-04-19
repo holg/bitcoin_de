@@ -92,9 +92,9 @@ async fn  main() {
     }
 }
 
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-pub async fn main() {
-
-
-}
+// #[cfg(feature = "wasm")]
+// #[wasm_bindgen]
+// pub async fn main() {
+//
+//
+// }
