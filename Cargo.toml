@@ -77,3 +77,8 @@ wasm = ["wasm-bindgen-futures", "wasm-bindgen", "js-sys", "web-sys", "reqwest-wa
 # These are not meant to be enabled directly by the user
 reqwest-native = ["reqwest/rustls-tls", "reqwest/json"] # For native targets (CLI, Actix) - uses rustls and json
 reqwest-wasm = ["reqwest/json"] # For WASM target - uses wasm-bindgen fetch and json
+[dev-dependencies]
+# Dependencies needed only for tests, examples, and benchmarks
+# Include tokio here to make #[tokio::main] available for doctests and unit tests
+# Use the specific features needed for #[tokio::main] in tests
+tokio = { version = "1.44.2", features = ["rt-multi-thread", "macros", "time"] } # Added tokio to dev-dependencies with necessary features

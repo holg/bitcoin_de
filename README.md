@@ -54,7 +54,7 @@ https://www.bitcoin.de/de/userprofile/tapi
 
 Create a `.env` file in the project root with your Bitcoin.de API credentials:
 
-```
+```dotenv
 API_KEY=your_bitcoin_de_api_key
 API_SECRET=your_bitcoin_de_api_secret
 ```
@@ -67,19 +67,78 @@ Alternatively, you can pass the `--api-key` and `--api-secret` to the command li
 ### As a Library
 
 ```rust
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::trading_api_sdk_v4::TradingApiSdkV4;
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::config::Config;
+// Example: Get Account Info and Orderbook using the Bitcoin.de Trading API v4
 
-fn main() {
+// Import necessary types from your crate
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::TradingApiSdkV4;
+// We don't need to import ApiCredentials anymore as TradingApiSdkV4::new takes strings directly
+// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::config::ApiCredentials; // Remove this import
+
+// Import other types needed for the example
+use std::collections::HashMap; // Needed for show_orderbook parameters
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::method_settings::constants::SHOW_ORDERBOOK_PARAMETER_TYPE; // Need this constant for show_orderbook params
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::order::ShowOrderbookResponse; // Import the response struct type for show_orderbook
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::account::ShowAccountInfoResponse; // Import the response struct type for show_account_info
+use bitcoin_de::bitcoin_de_trading_api_sdk_v4::errors::Error; // Import the custom Error type
+
+// Add an async runtime setup for the example main function
+// Using tokio as it's used by your default CLI
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // In a real application, get your API key and secret securely
+    // from environment variables, a configuration file, etc.
+    // For this example, replace with your actual credentials or environment variable loading logic.
+    let api_key = "your_api_key".to_string(); // Replace with your API Key
+    let api_secret = "your_api_secret".to_string(); // Replace with your API Secret
+
     // Create a new API client with your credentials
-    let config = Config::new("your_api_key", "your_api_secret");
-    let client = TradingApiSdkV4::new(config);
-    
-    // Get the current orderbook for BTC/EUR
-    match client.show_orderbook("btceur", "buy") {
-        Ok(response) => println!("Orderbook: {:?}", response),
-        Err(e) => eprintln!("Error: {}", e),
+    // TradingApiSdkV4::new takes the key and secret directly as Strings
+    let client = TradingApiSdkV4::new(api_key, api_secret);
+
+    // --- Example 1: Get Account Info ---
+    println!(">>> Calling showAccountInfo...");
+    // Call the async SDK method and await its result
+    let account_info_result: Result<ShowAccountInfoResponse, Error> = client.show_account_info().await;
+
+    match account_info_result {
+        Ok(response) => {
+            println!("showAccountInfo successful Response: {:?}", response);
+            // Access deserialized data, e.g.:
+            // if let Some(account_details) = response.account_info_details {
+            //     println!("Username: {}", account_details.username);
+            // }
+        }
+        Err(e) => {
+            eprintln!("Error getting account info: {}", e);
+        }
     }
+
+    // --- Example 2: Get the current orderbook for BTC/EUR (Buy side) ---
+    println!("\n>>> Calling showOrderbook...");
+    // show_orderbook takes the trading pair as a String and Option<HashMap> for other params
+    let mut params = HashMap::new();
+    // Add the 'type=buy' parameter to the HashMap
+    params.insert(SHOW_ORDERBOOK_PARAMETER_TYPE, "buy".to_string());
+
+    // Call the async SDK method and await its result
+    // show_orderbook returns Result<ShowOrderbookResponse, Error>
+    let orderbook_result: Result<ShowOrderbookResponse, Error> = client.show_orderbook("btceur".to_string(), Some(params)).await; // Pass trading pair as String and params
+
+    match orderbook_result {
+        Ok(response) => {
+            println!("Orderbook: {:?}", response);
+            // Access deserialized data, e.g.:
+            // for order in response.orders {
+            //     println!("{:?}", order);
+            // }
+        }
+        Err(e) => {
+            eprintln!("Error getting orderbook: {}", e);
+        }
+    }
+
+    // Return Ok(()) for the async main function on success
+    Ok(())
 }
 ```
 

@@ -19,16 +19,7 @@
 /// * `as_str(&self) -> &'static str` - Returns the string representation of the enum variant.
 /// * `to_string(&self) -> String` - Returns the string representation as an owned String.
 ///
-/// # Example
-///
-/// ```
-/// generate_enum!(Direction,
-///     Up => "up",
-///     Down => "down",
-///     Left => "left",
-///     Right => "right"
-/// );
-/// ```
+
 macro_rules! generate_enum {
     ($name:ident, $($variant:ident => $str_val:expr),*) => {
         #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -75,7 +66,7 @@ macro_rules! generate_enum {
 /// # Examples
 ///
 /// ```
-/// use bitcoin_de_trading_api_sdk_v4::enums::OrderType;
+/// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::enums::OrderType;
 ///
 /// let order_type = OrderType::Buy;
 /// assert_eq!(order_type.as_str(), "buy");
