@@ -57,19 +57,19 @@ web-sys = { version = "0.3.69", features = ["Window", "Document", "Element", "co
 
 # Backend framework (using Axum) - optional = true and included in 'backend' feature
 axum = { version = "0.8", features=["macros"],  optional = true } # Added axum dependency
-
+inventory = { version = "0.3", optional = true}
 
 # Make dotenv optional as it's primarily for CLI configuration
 dotenv = { version = "0.15.0", optional = true }
-
+once_cell = "1.21.3"
 # Add futures-util as an optional dependency, needed by the backend
 futures-util = { version = "0.3.31", optional = true } # Added futures-util
-
+bitcoin-de-api-macros = { path = "../bitcoin-de-api-macros", optional = true }
 [features]
 # Define our features
 cmdline = ["tokio/rt-multi-thread", "reqwest-native", "dotenv", "clap"] # Default feature enables CLI requirements
 
-backend = ["axum", "tokio", "tokio/rt-multi-thread", "reqwest-native", "dotenv", "futures-util"] # Actix backend requires Actix Web and Tokio for runtime
+backend = ["axum", "tokio", "tokio/rt-multi-thread", "reqwest-native", "dotenv", "futures-util", "bitcoin-de-api-macros", "inventory"] # Actix backend requires Actix Web and Tokio for runtime
 
 wasm = ["wasm-bindgen-futures", "wasm-bindgen", "js-sys", "web-sys", "reqwest-wasm"] # WASM requires WASM-specific crates and WASM reqwest features
 

@@ -1,6 +1,6 @@
 // src/bin/backend.rs
 #![cfg(feature = "backend")]
-
+mod api_route;
 mod handler;
 use handler::{handle_show_account_info, handle_show_rates};
 use {

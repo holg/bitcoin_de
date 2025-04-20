@@ -1,16 +1,21 @@
+#![cfg(feature = "backend")]
+use crate::backend::ApiRoute;
+use crate::TradingApiSdkV4;
+use crate::enums::TradingPair;
+use crate::ShowRatesResponse;
+use crate::ShowAccountInfoResponse;
 use std::sync::Arc;
-use axum::{extract::State, http::StatusCode, response::Json, extract::Path};
+use axum::{extract::State, http::StatusCode, response::{Json, IntoResponse}, extract::Path, Extension};
 // Import SDK components needed by handlers
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::TradingApiSdkV4; // The SDK client struct
-// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::errors::Error; // SDK Error type
+
 // TODO implement IntoResponse trait for custom error responses and use it here
 // Import enums and response structs used by handlers
-use bitcoin_de::enums::TradingPair; // Import the TradingPair enum (needed for from_str)
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::account::ShowAccountInfoResponse; // Response struct for account info
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::misc::ShowRatesResponse; // Response struct for rates
+// use bitcoin_de::enums::TradingPair; // Import the TradingPair enum (needed for from_str)
+// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::account::ShowAccountInfoResponse; // Response struct for account info
+// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::responses::misc::ShowRatesResponse; // Response struct for rates
 // Import the error detail struct for potential error responses
-use bitcoin_de::bitcoin_de_trading_api_sdk_v4::errors::ApiErrorDetail; // Assuming ApiErrorDetail is defined and public
-
+// use bitcoin_de::bitcoin_de_trading_api_sdk_v4::errors::ApiErrorDetail; // Assuming ApiErrorDetail is defined and public
+use bitcoin_de_api_macros::api_handler;
 
 /// Handles requests to retrieve account information from the Bitcoin.de API.
 ///
@@ -103,4 +108,28 @@ pub async fn handle_show_rates(
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
+}
+
+// Commented out the incompatible macro attribute
+// #[api_handler(method = "GET", path = "/macroaccount")]
+pub fn show_account_info_handler() -> Box<dyn axum::response::IntoResponse + Send + Sync> {
+    use once_cell::sync::Lazy;
+    use std::sync::Arc;
+
+    static SDK: Lazy<Arc<TradingApiSdkV4>> = Lazy::new(|| {
+        let key = std::env::var("API_KEY").unwrap_or_default();
+        let secret = std::env::var("API_SECRET").unwrap_or_default();
+        Arc::new(TradingApiSdkV4::new(key, secret))
+    });
+
+    let sdk = SDK.clone();
+
+    let fut = async move {
+        match sdk.show_account_info().await {
+            Ok(info) => axum::Json(info).into_response(),
+            Err(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        }
+    };
+
+    Box::new(fut)
 }

@@ -12,3 +12,8 @@ pub mod bitcoin_de_trading_api_sdk_v4;
 /// This allows users to import types and functions directly from the crate root
 /// without having to specify the full module path.
 pub use bitcoin_de_trading_api_sdk_v4::*;
+
+#[cfg(feature = "backend")]
+pub mod backend;
+#[cfg(feature = "backend")]
+pub use crate::backend::ApiRoute;
