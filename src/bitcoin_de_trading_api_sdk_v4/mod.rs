@@ -15,7 +15,7 @@ pub mod errors;
 /// Contains various enum definitions that represent different states, types,
 /// and options available in the Bitcoin.de Trading API.
 pub mod enums;
-
+pub use enums::*;
 /// Settings for API method calls
 ///
 /// Provides configuration structures and options that can be used to customize
@@ -46,8 +46,5 @@ pub use trading_api_sdk_v4::TradingApiSdkV4;
 /// at the crate root level, allowing users to access it without having to
 /// import from the nested module.
 pub use errors::Error;
-
-
-
 pub mod responses;
 pub use responses::*;

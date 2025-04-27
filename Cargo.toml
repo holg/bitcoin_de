@@ -12,6 +12,8 @@ documentation = "https://docs.rs/bitcoin_de"
 keywords = ["bitcoin", "trading", "api", "client", "crypto"]
 categories = ["api-bindings", "cryptography", "command-line-utilities"]
 exclude = ["target/", ".env.*", "secrets/", ".git/"]
+# Set the default binary to run with cargo run
+default-run = "bitcoin_de_trading_api_client"
 
 [lib]
 path = "src/lib.rs"
@@ -54,10 +56,9 @@ wasm-bindgen-futures = { version = "0.4.43", optional = true } # Needed to run a
 wasm-bindgen = { version = "0.2.93", optional = true } # For JS interop in WASM
 js-sys = { version = "0.3.69", optional = true } # For interacting with JS types in WASM
 web-sys = { version = "0.3.69", features = ["Window", "Document", "Element", "console"], optional = true } # For browser APIs in WASM
-
 # Backend framework (using Axum) - optional = true and included in 'backend' feature
 axum = { version = "0.8", features=["macros"],  optional = true } # Added axum dependency
-
+tracing = "0.1.41"
 
 # Make dotenv optional as it's primarily for CLI configuration
 dotenv = { version = "0.15.0", optional = true }
@@ -65,9 +66,24 @@ dotenv = { version = "0.15.0", optional = true }
 # Add futures-util as an optional dependency, needed by the backend
 futures-util = { version = "0.3.31", optional = true } # Added futures-util
 
+# Add these for SVG chart generation
+plotters = { git = "https://github.com/holg/plotters", default-features = false, features = ["svg_backend", "line_series", "point_series", "datetime"], optional = true }
+csv = { version = "1.2", optional = true }
+
 [features]
 # Define our features
-cmdline = ["tokio/rt-multi-thread", "reqwest-native", "dotenv", "clap"] # Default feature enables CLI requirements
+default = ["cmdline"]
+cmdline = [
+    "clap",
+    "dotenv",
+    "tokio/rt-multi-thread",
+    "tokio/macros",
+    "tokio/time",
+    "reqwest-native",
+    "plotters",
+    "csv",
+    "futures-util"
+]
 
 backend = ["axum", "tokio", "tokio/rt-multi-thread", "reqwest-native", "dotenv", "futures-util"] # Actix backend requires Actix Web and Tokio for runtime
 
@@ -82,3 +98,18 @@ reqwest-wasm = ["reqwest/json"] # For WASM target - uses wasm-bindgen fetch and 
 # Include tokio here to make #[tokio::main] available for doctests and unit tests
 # Use the specific features needed for #[tokio::main] in tests
 tokio = { version = "1.44.2", features = ["rt-multi-thread", "macros", "time"] } # Added tokio to dev-dependencies with necessary features
+[profile.release]
+# Enable Link Time Optimization (LTO) for better optimization across crate boundaries
+lto = true
+
+# Optimize for size rather than speed
+opt-level = "z"
+
+# Strip debug symbols
+strip = true
+
+# Enable code size optimizations
+codegen-units = 1
+
+# Panic behavior: abort instead of unwinding to save space
+panic = "abort"

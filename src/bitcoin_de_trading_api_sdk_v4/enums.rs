@@ -164,7 +164,11 @@ generate_enum!(TradingPair,
     UNIBNB => "UNIBNB",
     EURCHF => "EURCHF",
     BTCCHF => "BTCCHF",
-    ETHCHF => "ETHCHF"
+    ETHCHF => "ETHCHF",
+    BTGEUR => "BTGEUR",
+    DOGEEUR => "DOGEEUR",
+    USDTEUR => "USDTEUR",
+    USDCEUR => "USDCEUR"
 );
 
 /// Represents the available currencies on the Bitcoin.de platform.
@@ -287,6 +291,10 @@ const ALL_TRADING_PAIRS: &[TradingPair] = &[
     TradingPair::EURCHF,
     TradingPair::BTCCHF,
     TradingPair::ETHCHF,
+    TradingPair::BTGEUR,
+    TradingPair::DOGEEUR,
+    TradingPair::USDTEUR,
+    TradingPair::USDCEUR,
 ];
 impl TradingPair {
     /// Converts a string slice to a TradingPair enum variant using iteration.

@@ -52,7 +52,7 @@ async fn main() { // Async main function required for Axum and Tokio
         .route("/", get(hello_world)) // Root route
         // Add the new route for account info. Map GET requests to the handle_show_account_info handler.
         .route("/api/v4/account/info", get(handle_show_account_info)) // Define the API endpoint route
-        .route("/api/v4/rates/{trading_pair}", get(handle_show_account_info)) // Assuming this is the line // Define the API endpoint route
+        .route("/api/v4/rates/{trading_pair}", get(handle_show_rates)) // Assuming this is the line // Define the API endpoint route
         // Add the SDK client State to the router's state so handlers can access it
         .with_state(sdk_client);
 
