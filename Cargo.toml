@@ -1,6 +1,6 @@
 [package]
 name = "bitcoin_de"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Trahe Consult<trahe@mac.com>"]
 description = "Implementation of the Bitcoin.de Trading API v4"
