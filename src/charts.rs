@@ -559,10 +559,19 @@ pub fn generate_charts_from_csv(
         let current_rate = parse_f64(2, "current_rate");
         let rate_3h = parse_f64(3, "rate_3h");
         let rate_12h = parse_f64(4, "rate_12h");
-        let value_current = parse_f64(6, "value_weighted");
-        let value_3h = parse_f64(7, "value_weighted_3h");
-        let value_12h = parse_f64(8, "value_weighted_12h");
+        let amount = parse_f64(5, "amount");
+        // Fix these  csv-values are bollocks, it is simple math and shall be removed in the future
+        // let value_current = parse_f64(6, "value_weighted");
+        // let value_3h = parse_f64(7, "value_weighted_3h");
+        // let value_12h = parse_f64(8, "value_weighted_12h");
 
+        // Calculate the values ourselves instead of using the pre-calculated values
+        // This ensures consistency and avoids any errors in the CSV data
+        let value_current = current_rate * amount;
+        let value_3h = rate_3h * amount;
+        let value_12h = rate_12h * amount;
+
+        // Add data point for individual pair chart
         pair_data.entry(pair.clone()).or_default().push((
             timestamp,
             current_rate,

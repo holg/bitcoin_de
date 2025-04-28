@@ -49,8 +49,8 @@ cargo build --release
 
 ## Configuration
 
-On bitcoin.de you need to set up this:
-https://www.bitcoin.de/de/userprofile/tapi
+On bitcoin.de you need to set up your API token and secret:
+[https://www.bitcoin.de/de/userprofile/tapi](https://www.bitcoin.de/de/userprofile/tapi)
 
 Create a `.env` file in the project root with your Bitcoin.de API credentials:
 
