@@ -25,6 +25,7 @@ This project provides a comprehensive SDK for the Bitcoin.de cryptocurrency trad
 - Comprehensive error handling with detailed error codes
 - Command-line interface for quick operations
 - Fully documented API methods and data structures
+- Create SVG Charts out of the provided CSV (usually done by the cronjob) (new in 0.1.2)
 
 ## Installation
 
@@ -143,6 +144,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ```
 
 ### As a Command-Line Tool
+# Get the Rates and log as well the amounts into the CSV file (new in 0.1.2)
+#### --showrates the list of trading-pairs 
+#### --amount the same length list of amounts to be logged (for the portfolio_summary)
+```bash
+bitcoin_de_trading_api_client --showrates btceur,bcheur,btgeur,etheur,ltceur,xrpeur,dogeeur,soleur,trxeur,usdteur,usdceur --amounts 2.01,2.01,2.01,2,2.01,2.01,2.01 --csv-output test2.csv
+```
+
 
 
 # View the BTC/EUR orderbook
